@@ -1,0 +1,79 @@
+{
+    "cooperate": {
+        "wins": 4,
+        "losses": 69,
+        "draws": 48,
+        "total_score": 42902,
+        "games_played": 121
+    },
+    "defect": {
+        "wins": 81,
+        "losses": 2,
+        "draws": 2,
+        "total_score": 23560,
+        "games_played": 85
+    },
+    "generous_tft_10": {
+        "wins": 19,
+        "losses": 55,
+        "draws": 54,
+        "total_score": 49709,
+        "games_played": 128
+    },
+    "pavlov": {
+        "wins": 29,
+        "losses": 30,
+        "draws": 66,
+        "total_score": 48136,
+        "games_played": 125
+    },
+    "random": {
+        "wins": 53,
+        "losses": 35,
+        "draws": 17,
+        "total_score": 30828,
+        "games_played": 105
+    },
+    "grudger": {
+        "wins": 50,
+        "losses": 15,
+        "draws": 61,
+        "total_score": 44263,
+        "games_played": 126
+    },
+    "majority": {
+        "wins": 25,
+        "losses": 39,
+        "draws": 60,
+        "total_score": 48875,
+        "games_played": 124
+    },
+    "prober": {
+        "wins": 68,
+        "losses": 19,
+        "draws": 4,
+        "total_score": 23783,
+        "games_played": 91
+    },
+    "suspicious_tft": {
+        "wins": 33,
+        "losses": 22,
+        "draws": 38,
+        "total_score": 30070,
+        "games_played": 93
+    },
+    "tit_for_tat": {
+        "wins": 23,
+        "losses": 39,
+        "draws": 58,
+        "total_score": 44816,
+        "games_played": 120
+    },
+    "tit_for_two_tats": {
+        "wins": 5,
+        "losses": 65,
+        "draws": 50,
+        "total_score": 47905,
+        "games_played": 120
+    }
+}
