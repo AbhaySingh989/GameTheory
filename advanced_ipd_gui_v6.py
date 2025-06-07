@@ -626,7 +626,7 @@ class VisualizationWidget(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        painter.fillRect(self.rect(), QColor(Qt.GlobalColor.white))
+        painter.fillRect(self.rect(), QColor("#FAFAFA")) # Match QMainWindow background
 
         if not self.game_state:
             painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "No game running.")
@@ -657,13 +657,13 @@ class VisualizationWidget(QWidget):
 
         y_indicator = 35
         if last_move1:
-            color = Qt.GlobalColor.darkGreen if last_move1 == COOPERATE else Qt.GlobalColor.darkRed
+            color = QColor("#4CAF50") if last_move1 == COOPERATE else QColor("#FF9800")
             painter.setBrush(QBrush(color)); painter.setPen(QPen(color))
             if last_move1 == COOPERATE: painter.drawEllipse(p1_last_move_x, y_indicator, indicator_size, indicator_size)
             else: painter.drawRect(p1_last_move_x, y_indicator, indicator_size, indicator_size)
 
         if last_move2:
-            color = Qt.GlobalColor.darkGreen if last_move2 == COOPERATE else Qt.GlobalColor.darkRed
+            color = QColor("#4CAF50") if last_move2 == COOPERATE else QColor("#FF9800")
             painter.setBrush(QBrush(color)); painter.setPen(QPen(color))
             if last_move2 == COOPERATE: painter.drawEllipse(p2_last_move_x, y_indicator, indicator_size, indicator_size)
             else: painter.drawRect(p2_last_move_x, y_indicator, indicator_size, indicator_size)
@@ -677,29 +677,52 @@ class VisualizationWidget(QWidget):
         y_p1 = self.bar_y_offset
         painter.setPen(Qt.GlobalColor.black) # Reset pen
         painter.drawText(self.bar_x_margin, y_p1 - 5, f"{self.player1_name} History:")
+
+        # Background for Player 1
+        # Adjusted background rect to encompass title and some padding
+        p1_history_bg_rect = QRect(self.bar_x_margin, y_p1 - 5 - painter.fontMetrics().height(), int(available_width), self.bar_height + 10 + painter.fontMetrics().height())
+        painter.fillRect(p1_history_bg_rect, QColor("#E8F5E9"))
+
         for i, move in enumerate(self.history1):
             x = self.bar_x_margin + i * bar_width
             # Ensure minimum visible width for bars when many rounds
             draw_width = max(1, bar_width - 1) if bar_width > 1 else bar_width
             rect = QRect(int(x), y_p1, int(draw_width) , self.bar_height)
-            color = Qt.GlobalColor.darkGreen if move == COOPERATE else Qt.GlobalColor.darkRed
-            painter.fillRect(rect, QBrush(color))
-            # Draw outline only if bars are wide enough
-            if bar_width > 2:
-                 painter.setPen(Qt.GlobalColor.darkGray)
-                 painter.drawRect(rect)
 
-        y_p2 = y_p1 + self.bar_height + self.bar_spacing + 20
+            if move == COOPERATE:
+                painter.setBrush(QBrush(QColor("#4CAF50")))
+                painter.setPen(QPen(QColor("#388E3C")))
+                side = min(int(draw_width), self.bar_height)
+                circle_rect = QRect(int(x + (draw_width - side) / 2), y_p1 + (self.bar_height - side) / 2, side, side)
+                painter.drawEllipse(circle_rect)
+            else: # DEFECT
+                painter.setBrush(QBrush(QColor("#FF9800")))
+                painter.setPen(QPen(QColor("#F57C00")))
+                painter.drawRect(rect)
+
+        y_p2 = y_p1 + self.bar_height + self.bar_spacing + 20 + painter.fontMetrics().height() # Adjusted for p1 bg
         painter.setPen(Qt.GlobalColor.black) # Reset pen
         painter.drawText(self.bar_x_margin, y_p2 - 5, f"{self.player2_name} History:")
+
+        # Background for Player 2
+        # Adjusted background rect to encompass title and some padding
+        p2_history_bg_rect = QRect(self.bar_x_margin, y_p2 - 5 - painter.fontMetrics().height(), int(available_width), self.bar_height + 10 + painter.fontMetrics().height())
+        painter.fillRect(p2_history_bg_rect, QColor("#FFF3E0"))
+
         for i, move in enumerate(self.history2):
             x = self.bar_x_margin + i * bar_width
             draw_width = max(1, bar_width - 1) if bar_width > 1 else bar_width
             rect = QRect(int(x), y_p2, int(draw_width), self.bar_height)
-            color = Qt.GlobalColor.darkGreen if move == COOPERATE else Qt.GlobalColor.darkRed
-            painter.fillRect(rect, QBrush(color))
-            if bar_width > 2:
-                painter.setPen(Qt.GlobalColor.darkGray)
+
+            if move == COOPERATE:
+                painter.setBrush(QBrush(QColor("#4CAF50")))
+                painter.setPen(QPen(QColor("#388E3C")))
+                side = min(int(draw_width), self.bar_height)
+                circle_rect = QRect(int(x + (draw_width - side) / 2), y_p2 + (self.bar_height - side) / 2, side, side)
+                painter.drawEllipse(circle_rect)
+            else: # DEFECT
+                painter.setBrush(QBrush(QColor("#FF9800")))
+                painter.setPen(QPen(QColor("#F57C00")))
                 painter.drawRect(rect)
 
     def mousePressEvent(self, event):
@@ -899,7 +922,83 @@ class IPDSimulatorV6(QMainWindow):
         if os.path.exists(icon_path): self.setWindowIcon(QIcon(icon_path))
         else: print(f"Icon file not found: {icon_path}")
 
-        QApplication.setStyle("Fusion")
+        # QApplication.setStyle("Fusion") # Overridden by stylesheet
+
+        # --- Global Stylesheet ---
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #FAFAFA; /* Light grey background */
+            }
+            QTabWidget::pane {
+                border-top: 2px solid #C2C7CB;
+            }
+            QTabBar::tab {
+                background: #E0E0E0; /* Light grey for inactive tabs */
+                border: 1px solid #BDBDBD;
+                padding: 8px;
+                min-width: 100px; /* Adjust as needed */
+            }
+            QTabBar::tab:selected {
+                background: #FFFFFF; /* White for active tab */
+                margin-bottom: -1px; /* Make selected tab blend into pane */
+            }
+            QPushButton {
+                background-color: #4CAF50; /* Green */
+                color: white;
+                border-radius: 4px;
+                padding: 6px 12px;
+                border: 1px solid #388E3C;
+            }
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+            QPushButton:pressed {
+                background-color: #397D3B;
+            }
+            QPushButton:disabled {
+                background-color: #BDBDBD;
+                color: #757575;
+                border-color: #9E9E9E;
+            }
+            QComboBox, QSpinBox, QLineEdit, QTextBrowser, QListWidget, QTableWidget {
+                background-color: #FFFFFF;
+                border: 1px solid #BDBDBD;
+                padding: 4px;
+                border-radius: 3px;
+            }
+            QGroupBox {
+                font-weight: bold;
+                border: 1px solid #BDBDBD;
+                border-radius: 4px;
+                margin-top: 6px;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top left;
+                padding: 0 3px;
+                background-color: #FAFAFA; /* Match QMainWindow background */
+            }
+            QLabel {
+                color: #333333; /* Dark grey for text */
+            }
+            QSlider::groove:horizontal {
+                border: 1px solid #bbb;
+                background: white;
+                height: 10px;
+                border-radius: 4px;
+            }
+            QSlider::handle:horizontal {
+                background: #4CAF50; /* Green handle */
+                border: 1px solid #388E3C;
+                width: 18px;
+                margin: -4px 0; /* handle is centered on the groove */
+                border-radius: 9px;
+            }
+            QStatusBar {
+                background-color: #E0E0E0;
+                color: #333333;
+            }
+        """)
 
         # --- Central Widget and Layout ---
         self.central_widget = QWidget()
@@ -980,8 +1079,8 @@ class IPDSimulatorV6(QMainWindow):
         self.sg_speed_slider.setToolTip("Visualization delay (slider left=fast, right=slow)."); spd_layout = QHBoxLayout()
         spd_layout.addWidget(QLabel("Fast")); spd_layout.addWidget(self.sg_speed_slider); spd_layout.addWidget(QLabel("Slow"))
         layout.addRow("Speed:", spd_layout)
-        self.sg_run_button = QPushButton(self.get_icon("play.png"), " Run Game"); self.sg_run_button.setToolTip("Start simulation.")
-        self.sg_stop_button = QPushButton(self.get_icon("stop.png"), " Stop Game"); self.sg_stop_button.setToolTip("Stop simulation.")
+        self.sg_run_button = QPushButton(self.get_icon("play.png"), " ▶️ Run Game"); self.sg_run_button.setToolTip("Start simulation.")
+        self.sg_stop_button = QPushButton(self.get_icon("stop.png"), " ⏹️ Stop Game"); self.sg_stop_button.setToolTip("Stop simulation.")
         self.sg_run_button.clicked.connect(self.start_single_game); self.sg_stop_button.clicked.connect(self.stop_single_game)
         self.sg_stop_button.setEnabled(False); btn_layout = QHBoxLayout(); btn_layout.addWidget(self.sg_run_button); btn_layout.addWidget(self.sg_stop_button)
         layout.addRow(btn_layout)
@@ -1011,7 +1110,7 @@ class IPDSimulatorV6(QMainWindow):
         set_layout.addRow(self.tourn_seeding_check)
         set_group.setLayout(set_layout); layout.addWidget(set_group)
 
-        self.tourn_run_button = QPushButton(self.get_icon("play.png"), " Run Tournament"); self.tourn_run_button.setToolTip("Start tournament.")
+        self.tourn_run_button = QPushButton(self.get_icon("play.png"), " 🏆 Run Tournament"); self.tourn_run_button.setToolTip("Start tournament.")
         self.tourn_run_button.clicked.connect(self.run_tournament); layout.addWidget(self.tourn_run_button, alignment=Qt.AlignmentFlag.AlignCenter)
         self.update_tournament_options(); self.tab_widget.addTab(tab, "Tournament")
 
@@ -1024,9 +1123,9 @@ class IPDSimulatorV6(QMainWindow):
         self.strat_info_browser = QTextBrowser(); self.strat_info_browser.setOpenExternalLinks(True); self.strat_info_browser.setPlaceholderText("Select strategy to view details.")
         layout.addWidget(self.strat_info_browser)
         cust_group = QGroupBox("Custom Strategies"); cust_layout = QVBoxLayout()
-        self.define_custom_button = QPushButton(self.get_icon("add.png"), " Define New"); self.define_custom_button.setToolTip("Create custom strategy.")
+        self.define_custom_button = QPushButton(self.get_icon("add.png"), " ✨ Define New"); self.define_custom_button.setToolTip("Create custom strategy.")
         self.define_custom_button.clicked.connect(self.open_define_custom_strategy_dialog); cust_layout.addWidget(self.define_custom_button)
-        ls_btns = QHBoxLayout(); self.load_custom_button = QPushButton(self.get_icon("load.png"), " Load"); self.save_custom_button = QPushButton(self.get_icon("save.png"), " Save")
+        ls_btns = QHBoxLayout(); self.load_custom_button = QPushButton(self.get_icon("load.png"), " 📂 Load"); self.save_custom_button = QPushButton(self.get_icon("save.png"), "💾 Save")
         self.load_custom_button.setToolTip(f"Load from {CUSTOM_STRATEGIES_FILE}."); self.save_custom_button.setToolTip(f"Save to {CUSTOM_STRATEGIES_FILE}.")
         self.load_custom_button.clicked.connect(self.load_and_update_custom_strategies); self.save_custom_button.clicked.connect(save_custom_strategies)
         ls_btns.addWidget(self.load_custom_button); ls_btns.addWidget(self.save_custom_button); cust_layout.addLayout(ls_btns)
@@ -1069,15 +1168,15 @@ class IPDSimulatorV6(QMainWindow):
         self.sandbox_p1_combo.currentIndexChanged.connect(self.update_sandbox_ui); self.sandbox_p2_combo.currentIndexChanged.connect(self.update_sandbox_ui)
         p_sel.addRow("Player 1:", self.sandbox_p1_combo); p_sel.addRow("Player 2:", self.sandbox_p2_combo); layout.addLayout(p_sel)
 
-        self.sandbox_p1_manual_group = QGroupBox("P1 Manual Move"); p1_man = QHBoxLayout(); self.sandbox_p1_coop_button = QPushButton("Cooperate"); self.sandbox_p1_defect_button = QPushButton("Defect")
+        self.sandbox_p1_manual_group = QGroupBox("P1 Manual Move"); p1_man = QHBoxLayout(); self.sandbox_p1_coop_button = QPushButton("🤝 Cooperate"); self.sandbox_p1_defect_button = QPushButton("😠 Defect")
         self.sandbox_p1_coop_button.clicked.connect(lambda: self.sandbox_manual_move(0, COOPERATE)); self.sandbox_p1_defect_button.clicked.connect(lambda: self.sandbox_manual_move(0, DEFECT))
         p1_man.addWidget(self.sandbox_p1_coop_button); p1_man.addWidget(self.sandbox_p1_defect_button); self.sandbox_p1_manual_group.setLayout(p1_man); self.sandbox_p1_manual_group.setVisible(False); layout.addWidget(self.sandbox_p1_manual_group)
 
-        self.sandbox_p2_manual_group = QGroupBox("P2 Manual Move"); p2_man = QHBoxLayout(); self.sandbox_p2_coop_button = QPushButton("Cooperate"); self.sandbox_p2_defect_button = QPushButton("Defect")
+        self.sandbox_p2_manual_group = QGroupBox("P2 Manual Move"); p2_man = QHBoxLayout(); self.sandbox_p2_coop_button = QPushButton("🤝 Cooperate"); self.sandbox_p2_defect_button = QPushButton("😠 Defect")
         self.sandbox_p2_coop_button.clicked.connect(lambda: self.sandbox_manual_move(1, COOPERATE)); self.sandbox_p2_defect_button.clicked.connect(lambda: self.sandbox_manual_move(1, DEFECT))
         p2_man.addWidget(self.sandbox_p2_coop_button); p2_man.addWidget(self.sandbox_p2_defect_button); self.sandbox_p2_manual_group.setLayout(p2_man); self.sandbox_p2_manual_group.setVisible(False); layout.addWidget(self.sandbox_p2_manual_group)
 
-        ctrls = QHBoxLayout(); self.sandbox_next_round_button = QPushButton(self.get_icon("next.png"), " Next Round"); self.sandbox_reset_button = QPushButton(self.get_icon("reset.png"), " Reset Sandbox")
+        ctrls = QHBoxLayout(); self.sandbox_next_round_button = QPushButton(self.get_icon("next.png"), " ⏭️ Next Round"); self.sandbox_reset_button = QPushButton(self.get_icon("reset.png"), " 🔄 Reset Sandbox")
         self.sandbox_next_round_button.setToolTip("Advance one round."); self.sandbox_reset_button.setToolTip("Reset sandbox state.")
         self.sandbox_next_round_button.clicked.connect(self.sandbox_play_next_round); self.sandbox_reset_button.clicked.connect(self.sandbox_reset)
         self.sandbox_next_round_button.setEnabled(False); ctrls.addWidget(self.sandbox_next_round_button); ctrls.addWidget(self.sandbox_reset_button)
@@ -1115,7 +1214,7 @@ class IPDSimulatorV6(QMainWindow):
         ctrls = QHBoxLayout(); ctrls.addWidget(QLabel("Plot Type:")); self.plot_type_combo = QComboBox()
         self.plot_type_combo.addItems(["Total Score", "Win Rate (%)", "Average Score per Game", "H2H Matrix (Placeholder)", "Winners History (Placeholder)"])
         self.plot_type_combo.setToolTip("Select statistic to plot."); ctrls.addWidget(self.plot_type_combo, 1) # Stretch combobox
-        self.refresh_plot_button = QPushButton(self.get_icon("refresh.png"), " Refresh Plot"); self.refresh_plot_button.setToolTip("Update plot.")
+        self.refresh_plot_button = QPushButton(self.get_icon("refresh.png"), " 📊 Refresh Plot"); self.refresh_plot_button.setToolTip("Update plot.")
         self.refresh_plot_button.clicked.connect(self.update_analytics_plot); ctrls.addWidget(self.refresh_plot_button)
         layout.addLayout(ctrls)
         self.analytics_canvas = MplCanvas(self, width=5, height=4, dpi=100); layout.addWidget(self.analytics_canvas)
@@ -1182,12 +1281,7 @@ class IPDSimulatorV6(QMainWindow):
         if selected_id and selected_id in STRATEGIES:
             data = STRATEGIES[selected_id]
             # Basic HTML formatting
-            info_html = f"<h3>{data.get('name', 'Unknown Name')}</h3>" \
-                        f"<p><b>ID:</b> {selected_id}</p>" \
-                        f"<p><b>Desc:</b> {data.get('desc', 'N/A')}</p>" \
-                        f"<p><b>Pros/Cons:</b><br>{data.get('pros_cons', 'N/A').replace(chr(10), '<br>')}</p>" \
-                        f"<p><b>Analogue:</b><br>{data.get('analogue', 'N/A').replace(chr(10), '<br>')}</p>" \
-                        f"<p><b>Type:</b> {'Custom' if data.get('is_custom', False) else 'Built-in'}</p>"
+            info_html = f"<h3>{data.get('name', 'Unknown Name')}</h3>"                         f"<p><b>ID:</b> {selected_id}</p>"                         f"<p><b>Desc:</b> {data.get('desc', 'N/A')}</p>"                         f"<p><b>Pros/Cons:</b><br>{data.get('pros_cons', 'N/A').replace(chr(10), '<br>')}</p>"                         f"<p><b>Analogue:</b><br>{data.get('analogue', 'N/A').replace(chr(10), '<br>')}</p>"                         f"<p><b>Type:</b> {'Custom' if data.get('is_custom', False) else 'Built-in'}</p>"
             if data.get('is_custom', False):
                  # Use .get for rules too, in case of malformed data
                  rules_str = json.dumps(data.get('rules', {}), indent=2)
