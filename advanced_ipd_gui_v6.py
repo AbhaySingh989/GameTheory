@@ -693,7 +693,7 @@ class VisualizationWidget(QWidget):
                 painter.setBrush(QBrush(QColor("#4CAF50")))
                 painter.setPen(QPen(QColor("#388E3C")))
                 side = min(int(draw_width), self.bar_height)
-                circle_rect = QRect(int(x + (draw_width - side) / 2), y_p1 + (self.bar_height - side) / 2, side, side)
+                circle_rect = QRect(int(x + (draw_width - side) / 2), int(y_p1 + (self.bar_height - side) / 2), side, side)
                 painter.drawEllipse(circle_rect)
             else: # DEFECT
                 painter.setBrush(QBrush(QColor("#FF9800")))
@@ -718,7 +718,7 @@ class VisualizationWidget(QWidget):
                 painter.setBrush(QBrush(QColor("#4CAF50")))
                 painter.setPen(QPen(QColor("#388E3C")))
                 side = min(int(draw_width), self.bar_height)
-                circle_rect = QRect(int(x + (draw_width - side) / 2), y_p2 + (self.bar_height - side) / 2, side, side)
+                circle_rect = QRect(int(x + (draw_width - side) / 2), int(y_p2 + (self.bar_height - side) / 2), side, side)
                 painter.drawEllipse(circle_rect)
             else: # DEFECT
                 painter.setBrush(QBrush(QColor("#FF9800")))
