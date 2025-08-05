@@ -92,7 +92,8 @@ This simulator is designed to be a compelling educational resource:
 
 ## 👨‍💻 About the Author
 
-This project was created by **Abhay Singh**, a passionate software engineer with a talent for creating elegant and impactful applications.
+This project was created by **Abhay Singh**, a passionate is AI driven development
+
 
 *   **GitHub:** [AbhaySingh989](https://github.com/AbhaySingh989)
 *   **LinkedIn:** [Abhay Singh](https://www.linkedin.com/in/abhay-pratap-singh-905510149/)
