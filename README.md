@@ -1,8 +1,5 @@
 # 🚀 Advanced Iterated Prisoner's Dilemma (IPD) Simulator
 
-<p align="center">
-  <img src="https://via.placeholder.com/600x200.png?text=Game+Theory+in+Action" alt="Project Banner">
-</p>
 
 <p align="center">
   <strong>An interactive tool for exploring the fascinating world of Game Theory and strategic decision-making.</strong>
@@ -35,9 +32,6 @@ Imagine two partners in crime, arrested and held in separate cells. They can eit
 
 The "dilemma" is that while it's always rational for an individual to defect, the best outcome for the group is for both to cooperate. This simulator explores what happens when this game is played over and over again.
 
-<p align="center">
-  <img src="https://via.placeholder.com/400x200.png?text=Payoff+Matrix" alt="Payoff Matrix">
-</p>
 
 ## ✨ Key Features
 
@@ -99,7 +93,6 @@ This project was created by **Abhay Singh**, a passionate is AI driven developme
 *   **LinkedIn:** [Abhay Singh](https://www.linkedin.com/in/abhay-pratap-singh-905510149/)
 *   **Email:** [abhay.rkvv@gmail.com](mailto:abhay.rkvv@gmail.com)
 
-This simulator is a testament to his ability to build high-quality software that is both technically impressive and genuinely useful.
 
 ## 📜 License
 
